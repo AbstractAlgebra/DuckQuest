@@ -4,6 +4,7 @@
 
 #include "jam-engine/Core/Game.hpp"
 #include "jam-engine/Core/GamepadPredefs.hpp"
+#include "jam-engine/Utility/Trig.hpp"
 
 namespace dq
 {
@@ -49,7 +50,7 @@ const sf::Color playerColours[maxPlayers] = {
 int derp = 0; // remove pls
 
 Player::Player(Dungeon& dungeon)
-	:je::Entity(&dungeon, "Player", sf::Vector2f(dungeon.getWidth() / 2, dungeon.getHeight() / 2), sf::Vector2i(32, 32), sf::Vector2i(16, 16))
+	:je::Entity(&dungeon, "Player", sf::Vector2f(dungeon.getWidth() / 2, dungeon.getHeight() / 2), sf::Vector2i(32, 32), sf::Vector2i(-16, -16))
 	,controls(dungeon.getGame().getInput())
 	,sprite(dungeon.getGame().getTexManager().get("player.png"))
 	,playerID(derp++)
@@ -71,11 +72,17 @@ Player::Player(Dungeon& dungeon)
 	});
 
 	sprite.setColor(playerColours[playerID]);
+	sprite.setOrigin(16, 16);
 }
 
 void Player::onUpdate()
 {
-	transform().move(movement.getPos());
+	if (je::length(movement.getPos()) > 0.15f)
+	{
+		transform().move(movement.getPos() * 3.f);
+
+		sprite.setRotation(-je::direction(movement.getPos()));
+	}
 
 	sprite.setPosition(getPos());
 }
