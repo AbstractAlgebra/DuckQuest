@@ -1,5 +1,6 @@
 #include "Player.hpp"
 
+#include "Arrow.hpp"
 #include "Dungeon.hpp"
 
 #include "jam-engine/Core/Game.hpp"
@@ -51,7 +52,7 @@ int derp = 0; // remove pls
 
 Player::Player(Dungeon& dungeon)
 	:je::Entity(&dungeon, "Player", sf::Vector2f(dungeon.getWidth() / 2, dungeon.getHeight() / 2), sf::Vector2i(32, 32), sf::Vector2i(-16, -16))
-	,controls(dungeon.getGame().getInput())
+	,controls(dungeon.getGame().getInput(), derp)
 	,sprite(dungeon.getGame().getTexManager().get("player.png"))
 	,playerID(derp++)
 {
@@ -65,6 +66,10 @@ Player::Player(Dungeon& dungeon)
 	const je::Axes kbAxes(controls, "move_x_kb", "move_y_kb");
 	movement = je::AxesSet({ kbAxes, gpAxes });
 
+	controls.setAxis("aim_x_gp", je::Controller::AxisBind(sf::Joystick::Axis::U));
+	controls.setAxis("aim_y_gp", je::Controller::AxisBind(sf::Joystick::Axis::R));
+	aiming = je::AxesSet({ je::Axes(controls, "aim_x_gp", "aim_y_gp") });
+
 	controls.setKeybinds("fire", {
 		je::Controller::Bind(fireKeys[playerID]),
 		je::Binds::X360::X,
@@ -77,11 +82,21 @@ Player::Player(Dungeon& dungeon)
 
 void Player::onUpdate()
 {
+	if (controls.isActionReleased("fire"))
+	{
+		level->addEntity(std::make_unique<Arrow>(level, getPos() + aiming.getPos() * 48.f, aiming.getPos() * 24.f));
+	}
+
 	if (je::length(movement.getPos()) > 0.15f)
 	{
 		transform().move(movement.getPos() * 3.f);
 
 		sprite.setRotation(-je::direction(movement.getPos()));
+	}
+	
+	if (je::length(aiming.getPos()) > 0.15f)
+	{
+		sprite.setRotation(-je::direction(aiming.getPos()));
 	}
 
 	sprite.setPosition(getPos());

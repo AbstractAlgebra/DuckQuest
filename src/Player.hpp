@@ -24,6 +24,7 @@ private:
 	je::Controller controls;
 	sf::Sprite sprite;
 	je::AxesSet movement;
+	je::AxesSet aiming;
 	//je::AxesSet aiming;
 	const int playerID;
 };
