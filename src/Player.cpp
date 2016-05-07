@@ -5,6 +5,7 @@
 
 #include "jam-engine/Core/Game.hpp"
 #include "jam-engine/Core/GamepadPredefs.hpp"
+#include "jam-engine/Utility/Assert.hpp"
 #include "jam-engine/Utility/Trig.hpp"
 
 namespace dq
@@ -56,7 +57,7 @@ Player::Player(Dungeon& dungeon)
 	,sprite(dungeon.getGame().getTexManager().get("player.png"))
 	,playerID(derp++)
 {
-	assert(playerID >= 0 && playerID < maxPlayers);
+	JE_ASSERT(playerID >= 0 && playerID < maxPlayers);
 
 	controls.setAxis("move_x_gp", je::Controller::AxisBind(sf::Joystick::Axis::X));
 	controls.setAxis("move_y_gp", je::Controller::AxisBind(sf::Joystick::Axis::Y));
