@@ -13,10 +13,11 @@
 namespace dq
 {
 	Enemy::Enemy(Dungeon& dungeon)
-		:je::Entity(&dungeon, "Player", sf::Vector2f(dungeon.getWidth() / 4, dungeon.getHeight() / 4), sf::Vector2i(32, 32), sf::Vector2i(-16, -16))
+		:je::Entity(&dungeon, "Enemy", sf::Vector2f(dungeon.getWidth() / 4, dungeon.getHeight() / 4), sf::Vector2i(32, 32), sf::Vector2i(-16, -16))
 		, sprite(dungeon.getGame().getTexManager().get("enemy.png"))
-		, bBox(sprite.getPosition().x, sprite.getPosition().y,400,400)
-		,dungeon(dungeon)
+		, bBox(this->getPos().x - 50, this->getPos().y - 100, 200, 200)
+		, dungeon(dungeon)
+		, enemyID(0)
 
 {
 	sprite.setOrigin(16, 16);
@@ -30,25 +31,29 @@ void Enemy::onUpdate()
 
 	//TODO: add code to find closest player
 	//ACTS LIKE A POINTER
-	je::Ref<Player> k = results[0];
+	if (results.size() > 0) {
+		je::Ref<Player> k = results[0];
 
-	if (k->getPos().x > this->getPos().x) {
-		this->transform().setPosition(this->getPos().x+1, this->getPos().y);
-	}
+		if (k->getPos().x > this->getPos().x) {
+			this->transform().setPosition(this->getPos().x + 1, this->getPos().y);
+		}
 
-	if (k->getPos().x < this->getPos().x) {
-		this->transform().setPosition(this->getPos().x - 1, this->getPos().y);
-	}
+		if (k->getPos().x < this->getPos().x) {
+			this->transform().setPosition(this->getPos().x - 1, this->getPos().y);
+		}
 
-	if (k->getPos().y < this->getPos().y) {
-		this->transform().setPosition(this->getPos().x, this->getPos().y - 1);
-	}
+		if (k->getPos().y < this->getPos().y) {
+			this->transform().setPosition(this->getPos().x, this->getPos().y - 1);
+		}
 
-	if (k->getPos().y > this->getPos().y) {
-		this->transform().setPosition(this->getPos().x, this->getPos().y+1);
+		if (k->getPos().y > this->getPos().y) {
+			this->transform().setPosition(this->getPos().x, this->getPos().y + 1);
+		}
 	}
 
 	sprite.setPosition(getPos());
+	bBox.left = getPos().x-100;
+	bBox.top = getPos().y-100;
 }
 
 void Enemy::draw(sf::RenderTarget& target, const sf::RenderStates& states) const

@@ -18,6 +18,7 @@ private:
 	sf::Sprite sprite;
 	Dungeon& dungeon;
 	sf::Rect<int> bBox;
+	const int enemyID;
 
 	void draw(sf::RenderTarget& target, const sf::RenderStates& states) const override;
 

@@ -18,9 +18,11 @@ public:
 
 private:
 	void onUpdate() override;
+	void killPlayer();
 
 	void draw(sf::RenderTarget& target, const sf::RenderStates& states) const override;
-
+	Dungeon& dungeon;
+	sf::Rect<int> bBox;
 	je::Controller controls;
 	sf::Sprite sprite;
 	je::AxesSet movement;

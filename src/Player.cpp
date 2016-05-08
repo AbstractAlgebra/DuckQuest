@@ -2,6 +2,7 @@
 
 #include "Arrow.hpp"
 #include "Dungeon.hpp"
+#include <iostream>
 
 #include "jam-engine/Core/Game.hpp"
 #include "jam-engine/Core/GamepadPredefs.hpp"
@@ -56,6 +57,8 @@ Player::Player(Dungeon& dungeon)
 	,controls(dungeon.getGame().getInput(), derp)
 	,sprite(dungeon.getGame().getTexManager().get("player.png"))
 	,playerID(derp++)
+	,dungeon(dungeon)
+	,bBox(sprite.getPosition().x, sprite.getPosition().y, 64, 64)
 {
 	JE_ASSERT(playerID >= 0 && playerID < maxPlayers);
 
@@ -77,7 +80,7 @@ Player::Player(Dungeon& dungeon)
 		je::Binds::X360::RT
 	});
 
-	//sprite.setColor(playerColours[playerID]);
+	sprite.setColor(playerColours[playerID]);
 	sprite.setOrigin(16, 16);
 }
 
@@ -99,8 +102,24 @@ void Player::onUpdate()
 	{
 		sprite.setRotation(-je::direction(aiming.getPos()));
 	}
+	//handle player collliding with enemy
+	std::vector<je::Ref<je::Entity>> results;
+	dungeon.findCollisions(results, bBox, "Enemy");
+	if(results.size()>0){
+			this->killPlayer();	
+	}
+
+
 
 	sprite.setPosition(getPos());
+	bBox.left = getPos().x - 32;
+	bBox.top = getPos().y - 32;
+
+}
+
+void Player::killPlayer() {
+	std::cout << "Player has died";
+	transform().setPosition(sf::Vector2f(dungeon.getWidth() / 2, dungeon.getHeight() / 2));
 }
 
 void Player::draw(sf::RenderTarget& target, const sf::RenderStates& states) const
