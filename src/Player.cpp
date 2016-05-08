@@ -77,7 +77,7 @@ Player::Player(Dungeon& dungeon)
 		je::Binds::X360::RT
 	});
 
-	sprite.setColor(playerColours[playerID]);
+	//sprite.setColor(playerColours[playerID]);
 	sprite.setOrigin(16, 16);
 }
 
